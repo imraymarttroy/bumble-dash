@@ -2,9 +2,12 @@
  * Game entities: the bee, the flower-stalk obstacles, scenery and particles.
  * All art is drawn with the Canvas 2D API, so there are no image assets.
  */
-// W grows on wide phone screens so the game fills them (see fitToScreen in game.js)
-let W = 900;
-const H = 600;
+// Portrait world. Every player gets the same 540x920 play area. The view
+// (VIEW_H) shows more ground on tall screens and a thinner ground strip on
+// short ones, so the game always fills the phone's width.
+const W = 540;
+const H = 920;
+let VIEW_H = H;
 const GROUND_H = 80;
 const FLOOR_Y = H - GROUND_H;
 
@@ -34,7 +37,7 @@ class Bee {
   }
 
   reset() {
-    this.x = 220;
+    this.x = 150;
     this.y = H / 2 - 40;
     this.vy = 0;
     this.r = 24; // collision radius
@@ -354,7 +357,7 @@ class Stalk {
 class Scenery {
   constructor() {
     this.clouds = Array.from({ length: 6 }, () => ({
-      x: rand(0, W), y: rand(30, 220), s: rand(0.6, 1.3),
+      x: rand(0, W), y: rand(40, 420), s: rand(0.6, 1.3),
     }));
     this.hillOffset = 0;
     this.bushOffset = 0;
@@ -364,7 +367,7 @@ class Scenery {
   update(dt, speed) {
     for (const c of this.clouds) {
       c.x -= speed * 0.1 * c.s * dt;
-      if (c.x < -150) { c.x = W + 150; c.y = rand(30, 220); c.s = rand(0.6, 1.3); }
+      if (c.x < -150) { c.x = W + 150; c.y = rand(40, 420); c.s = rand(0.6, 1.3); }
     }
     this.hillOffset = (this.hillOffset + speed * 0.25 * dt) % 600;
     this.bushOffset = (this.bushOffset + speed * 0.5 * dt) % 300;
@@ -382,7 +385,7 @@ class Scenery {
     // sun
     g.fillStyle = "rgba(255,240,170,0.9)";
     g.beginPath();
-    g.arc(760, 90, 42, 0, Math.PI * 2);
+    g.arc(430, 120, 42, 0, Math.PI * 2);
     g.fill();
 
     // clouds
@@ -424,7 +427,7 @@ class Scenery {
 
   drawGround(g) {
     g.fillStyle = "#d9b26a";
-    g.fillRect(0, FLOOR_Y, W, GROUND_H);
+    g.fillRect(0, FLOOR_Y, W, VIEW_H - FLOOR_Y + 2);
     // grass strip
     g.fillStyle = "#58b84a";
     g.fillRect(0, FLOOR_Y, W, 16);

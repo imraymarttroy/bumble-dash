@@ -20,8 +20,8 @@ body {
 }
 
 #wrap {
-  width: min(100vw, calc((100vh - 40px) * 1.5));
-  aspect-ratio: 3 / 2;
+  width: min(100vw, calc((100vh - 40px) * 540 / 920));
+  aspect-ratio: 540 / 920;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
   border-radius: 10px;
   overflow: hidden;
@@ -171,19 +171,13 @@ canvas {
   .room-code { font-size: 30px; }
 }
 
-@media (max-height: 500px) {
-  .hint { display: none; }
-  #wrap { width: min(100vw, calc(100vh * 1.5)); border-radius: 0; }
-}
-
-/* ------------------------------------------------ phones: full screen */
-.rotate { display: none; }
-
+/* ------------------------------------------- portrait, phone-first */
+/* Phones: edge to edge. Taller screens get extra ground, not bars. */
 @media (pointer: coarse) {
   html, body { height: 100vh; height: 100dvh; }
   body { gap: 0; }
   #wrap {
-    width: 100vw;
+    width: min(100vw, calc(100dvh * 540 / 870));
     height: 100vh;
     height: 100dvh;
     aspect-ratio: auto;
@@ -191,14 +185,4 @@ canvas {
     box-shadow: none;
   }
   .hint { display: none; }
-
-  /* Portrait: the game is landscape, so keep it 3:2 and suggest rotating */
-  body.portrait #wrap { height: auto; aspect-ratio: 3 / 2; }
-  body.portrait .rotate {
-    display: block;
-    margin-top: 16px;
-    font-size: 15px;
-    opacity: 0.75;
-    text-align: center;
-  }
 }

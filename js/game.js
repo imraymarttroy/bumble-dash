@@ -8,24 +8,24 @@
   const g = canvas.getContext("2d");
 
   /* ------------------------------------------------- phone full screen */
-  // On touch devices the game fills the whole screen: the height stays 600
-  // world units and the width stretches to match the screen's shape.
+  // The canvas matches the shape of its box (#wrap). Width is always 540
+  // world units; a taller screen just shows more ground under the floor.
   const isTouch = window.matchMedia("(pointer: coarse)").matches;
+  const wrapEl = document.getElementById("wrap");
 
   function fitToScreen() {
-    if (!isTouch) return;
-    const vw = window.innerWidth, vh = window.innerHeight;
-    const landscape = vw > vh;
-    const newW = landscape ? Math.round(clamp((H * vw) / vh, 900, 1600)) : 900;
-    if (newW !== W) {
-      W = newW;
+    const r = wrapEl.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const vh = Math.round(clamp((W * r.height) / r.width, FLOOR_Y + 30, 1400));
+    if (vh !== canvas.height || canvas.width !== W) {
+      VIEW_H = vh;
       canvas.width = W;
+      canvas.height = VIEW_H;
     }
-    document.body.classList.toggle("portrait", !landscape);
   }
   fitToScreen();
   window.addEventListener("resize", fitToScreen);
-  window.addEventListener("orientationchange", () => setTimeout(fitToScreen, 150));
+  if (window.ResizeObserver) new ResizeObserver(fitToScreen).observe(wrapEl);
 
   // Hide the browser bars (Android Chrome etc.). Needs a tap, so it runs on
   // taps on the game or the menu buttons. iPhone Safari can't do this for
@@ -39,7 +39,7 @@
     try {
       const p = req.call(el, { navigationUI: "hide" });
       const lock = () => {
-        if (screen.orientation && screen.orientation.lock) screen.orientation.lock("landscape").catch(() => {});
+        if (screen.orientation && screen.orientation.lock) screen.orientation.lock("portrait").catch(() => {});
       };
       if (p && p.then) p.then(lock).catch(() => {});
       else lock();
@@ -106,7 +106,7 @@
   let sendT = 0;
   let endT = 0;
   let results = [];
-  const BEE_X = 220;
+  const BEE_X = 150;
 
   try { best = parseInt(localStorage.getItem("jeme-best") || "0", 10) || 0; } catch (e) {}
 
@@ -207,7 +207,7 @@
     // mute button in the top-right corner
     const rect = canvas.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * W;
-    const y = ((e.clientY - rect.top) / rect.height) * H;
+    const y = ((e.clientY - rect.top) / rect.height) * VIEW_H;
     if (x > W - 60 && y < 60) { Sfx.toggleMute(); return; }
     press();
   });
@@ -705,15 +705,15 @@
     // HUD / overlays
     if (state === "title" && !menuOpen()) {
       const bob = Math.sin(time * 2.5) * 6;
-      text("JEME-JEME", W / 2, 140 + bob, 84, { color: "#ffcc33", lw: 12 });
-      text("a very clumsy flyer", W / 2, 205, 26, { color: "#fff", lw: 6 });
-      if (Math.floor(time * 2) % 2 === 0) text("Tap or press Space to start", W / 2, 420, 30, { lw: 7 });
-      if (best > 0) text(`Best: ${best}`, W / 2, 470, 24, { lw: 6 });
+      text("JEME-JEME", W / 2, 230 + bob, 76, { color: "#ffcc33", lw: 12 });
+      text("a very clumsy flyer", W / 2, 295, 26, { color: "#fff", lw: 6 });
+      if (Math.floor(time * 2) % 2 === 0) text("Tap to start", W / 2, 640, 34, { lw: 7 });
+      if (best > 0) text(`Best: ${best}`, W / 2, 700, 26, { lw: 6 });
     }
 
     if (state === "ready") {
-      text("Get Ready!", W / 2, 150, 60, { color: "#ffcc33", lw: 10 });
-      text("Tap / Space to flap", W / 2, 400, 28, { lw: 7 });
+      text("Get Ready!", W / 2, 260, 60, { color: "#ffcc33", lw: 10 });
+      text("Tap to flap", W / 2, 620, 30, { lw: 7 });
       // little tap hand hint
       g.fillStyle = "rgba(255,255,255,0.9)";
       const p = (Math.sin(time * 6) + 1) * 4;
@@ -726,7 +726,7 @@
     if (state === "play" || state === "dying") {
       const s = 1 + scorePop * 0.25;
       g.save();
-      g.translate(W / 2, 70);
+      g.translate(W / 2, 130);
       g.scale(s, s);
       text(String(score), 0, 0, 64, { lw: 10 });
       g.restore();
@@ -737,12 +737,12 @@
     if (state === "countdown") {
       const n = 3 - Math.floor(stateT);
       const f = stateT % 1;
-      text(String(n), W / 2, 200, 120 * (1.3 - f * 0.3), { color: "#ffcc33", lw: 14 });
-      text("Get Ready!", W / 2, 320, 36, { lw: 8 });
+      text(String(n), W / 2, 280, 120 * (1.3 - f * 0.3), { color: "#ffcc33", lw: 14 });
+      text("Get Ready!", W / 2, 400, 36, { lw: 8 });
     }
 
     if (mode === "mp" && state === "play" && !bee.alive) {
-      text("You're out! Watching the others…", W / 2, 140, 28, { color: "#ff9f9f", lw: 6 });
+      text("You're out! Watching the others…", W / 2, 220, 24, { color: "#ff9f9f", lw: 6 });
     }
 
     if (state === "results") {
@@ -750,9 +750,9 @@
       const ease = 1 - Math.pow(1 - slide, 3);
       const winner = results[0];
       const title = winner && winner.me ? "You win!" : `${winner ? winner.name : "?"} wins!`;
-      text(title, W / 2, 100 * ease, 60, { color: "#ffcc33", lw: 10 });
+      text(title, W / 2, 180 * ease, 56, { color: "#ffcc33", lw: 10 });
       const ph = 60 + results.length * 52;
-      const py = H + 20 - (H - 150) * ease;
+      const py = VIEW_H + 20 - (VIEW_H - 260) * ease;
       panel(W / 2 - 220, py, 440, ph);
       results.forEach((r, i) => {
         const y = py + 46 + i * 52;
@@ -765,17 +765,17 @@
         text(String(r.score), W / 2 + 185, y, 32, { align: "right", lw: 6 });
       });
       if (stateT > 1 && Math.floor(time * 2) % 2 === 0) {
-        const msg = Net.isHost ? "Tap or press Space for a rematch" : "Waiting for the host to start a rematch…";
-        text(msg, W / 2, py + ph + 40, 24, { lw: 6 });
+        const msg = Net.isHost ? "Tap for a rematch" : "Waiting for the host to start a rematch…";
+        text(msg, W / 2, py + ph + 40, 22, { lw: 6 });
       }
     }
 
     if (state === "over") {
       const slide = Math.min(1, stateT * 3);
       const ease = 1 - Math.pow(1 - slide, 3);
-      text("Game Over", W / 2, 110 * ease, 64, { color: "#ff7b7b", lw: 10 });
+      text("Game Over", W / 2, 200 * ease, 64, { color: "#ff7b7b", lw: 10 });
 
-      const py = H + 20 - (H - 170) * ease;
+      const py = VIEW_H + 20 - (VIEW_H - 280) * ease;
       panel(W / 2 - 200, py, 400, 220);
 
       const medal = MEDALS.find((m) => score >= m.min);
@@ -800,20 +800,20 @@
       if (newBest) text("NEW!", W / 2 + 160, py + 125, 18, { color: "#ff5e5e", stroke: null });
 
       if (stateT > 0.6 && Math.floor(time * 2) % 2 === 0) {
-        text("Tap or press Space to play again", W / 2, py + 260, 26, { lw: 6 });
+        text("Tap to play again", W / 2, py + 270, 30, { lw: 6 });
       }
     }
 
     if (paused) {
       g.fillStyle = "rgba(0,0,0,0.4)";
-      g.fillRect(0, 0, W, H);
+      g.fillRect(0, 0, W, VIEW_H);
       text("Paused", W / 2, H / 2 - 20, 60, { lw: 10 });
-      text("Tap or press P to resume", W / 2, H / 2 + 40, 24, { lw: 6 });
+      text("Tap to resume", W / 2, H / 2 + 40, 24, { lw: 6 });
     }
 
     if (flash > 0) {
       g.fillStyle = `rgba(255,255,255,${flash * 0.8})`;
-      g.fillRect(0, 0, W, H);
+      g.fillRect(0, 0, W, VIEW_H);
     }
 
     drawMuteIcon();
