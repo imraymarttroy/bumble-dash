@@ -13,7 +13,7 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 /* --------------------------------------------------------------- Player */
 // The player's face. If it fails to load, the game falls back to the bee.
 const FACE = new Image();
-FACE.src = "assets/face.png?v=2";
+FACE.src = "assets/face.png?v=3";
 
 function star(g, x, y, r) {
   g.beginPath();
@@ -99,26 +99,16 @@ class Bee {
     wing(-1);
     wing(1);
 
-    // face
+    // face (transparent cut-out, no frame)
+    const S = R * 2.5;
     g.save();
-    g.beginPath();
-    g.arc(0, 0, R, 0, Math.PI * 2);
-    g.clip();
+    g.shadowColor = "rgba(0,0,0,0.25)";
+    g.shadowBlur = 6;
+    g.shadowOffsetY = 3;
     if (!this.alive) g.filter = "grayscale(0.7)";
-    g.drawImage(FACE, -R, -R, R * 2, R * 2);
+    g.drawImage(FACE, -S / 2, -S / 2, S, S);
     g.filter = "none";
     g.restore();
-
-    g.strokeStyle = "#ffcc33";
-    g.lineWidth = 4;
-    g.beginPath();
-    g.arc(0, 0, R, 0, Math.PI * 2);
-    g.stroke();
-    g.strokeStyle = "#3a2a10";
-    g.lineWidth = 1.5;
-    g.beginPath();
-    g.arc(0, 0, R + 2, 0, Math.PI * 2);
-    g.stroke();
 
     // dizzy stars when crashed
     if (!this.alive) {
