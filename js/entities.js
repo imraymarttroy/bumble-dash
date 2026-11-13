@@ -2,7 +2,8 @@
  * Game entities: the bee, the flower-stalk obstacles, scenery and particles.
  * All art is drawn with the Canvas 2D API, so there are no image assets.
  */
-const W = 900;
+// W grows on wide phone screens so the game fills them (see fitToScreen in game.js)
+let W = 900;
 const H = 600;
 const GROUND_H = 80;
 const FLOOR_Y = H - GROUND_H;

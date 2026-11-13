@@ -175,3 +175,30 @@ canvas {
   .hint { display: none; }
   #wrap { width: min(100vw, calc(100vh * 1.5)); border-radius: 0; }
 }
+
+/* ------------------------------------------------ phones: full screen */
+.rotate { display: none; }
+
+@media (pointer: coarse) {
+  html, body { height: 100vh; height: 100dvh; }
+  body { gap: 0; }
+  #wrap {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    aspect-ratio: auto;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .hint { display: none; }
+
+  /* Portrait: the game is landscape, so keep it 3:2 and suggest rotating */
+  body.portrait #wrap { height: auto; aspect-ratio: 3 / 2; }
+  body.portrait .rotate {
+    display: block;
+    margin-top: 16px;
+    font-size: 15px;
+    opacity: 0.75;
+    text-align: center;
+  }
+}

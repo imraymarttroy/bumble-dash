@@ -7,6 +7,48 @@
   const canvas = document.getElementById("game");
   const g = canvas.getContext("2d");
 
+  /* ------------------------------------------------- phone full screen */
+  // On touch devices the game fills the whole screen: the height stays 600
+  // world units and the width stretches to match the screen's shape.
+  const isTouch = window.matchMedia("(pointer: coarse)").matches;
+
+  function fitToScreen() {
+    if (!isTouch) return;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const landscape = vw > vh;
+    const newW = landscape ? Math.round(clamp((H * vw) / vh, 900, 1600)) : 900;
+    if (newW !== W) {
+      W = newW;
+      canvas.width = W;
+    }
+    document.body.classList.toggle("portrait", !landscape);
+  }
+  fitToScreen();
+  window.addEventListener("resize", fitToScreen);
+  window.addEventListener("orientationchange", () => setTimeout(fitToScreen, 150));
+
+  // Hide the browser bars (Android Chrome etc.). Needs a tap, so it runs on
+  // taps on the game or the menu buttons. iPhone Safari can't do this for
+  // web pages; there, "Add to Home Screen" gives the full-screen version.
+  function goFullscreen() {
+    if (!isTouch) return;
+    const el = document.documentElement;
+    if (document.fullscreenElement || document.webkitFullscreenElement) return;
+    const req = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (!req) return;
+    try {
+      const p = req.call(el, { navigationUI: "hide" });
+      const lock = () => {
+        if (screen.orientation && screen.orientation.lock) screen.orientation.lock("landscape").catch(() => {});
+      };
+      if (p && p.then) p.then(lock).catch(() => {});
+      else lock();
+    } catch (e) {}
+  }
+  document.addEventListener("pointerup", (e) => {
+    if (e.target === canvas || (e.target.closest && e.target.closest("button"))) goFullscreen();
+  });
+
   // Fallback for older browsers without CanvasRenderingContext2D.roundRect
   if (!g.roundRect) {
     CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
