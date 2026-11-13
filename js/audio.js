@@ -6,7 +6,7 @@ const Sfx = (() => {
   let ctx = null;
   let muted = false;
 
-  try { muted = localStorage.getItem("bumble-muted") === "1"; } catch (e) {}
+  try { muted = localStorage.getItem("jeme-muted") === "1"; } catch (e) {}
 
   function ensure() {
     if (!ctx) {
@@ -51,7 +51,7 @@ const Sfx = (() => {
     },
     toggleMute() {
       muted = !muted;
-      try { localStorage.setItem("bumble-muted", muted ? "1" : "0"); } catch (e) {}
+      try { localStorage.setItem("jeme-muted", muted ? "1" : "0"); } catch (e) {}
       return muted;
     },
     get muted() { return muted; },

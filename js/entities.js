@@ -10,7 +10,23 @@ const FLOOR_Y = H - GROUND_H;
 const rand = (a, b) => a + Math.random() * (b - a);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
-/* ------------------------------------------------------------------ Bee */
+/* --------------------------------------------------------------- Player */
+// The player's face. If it fails to load, the game falls back to the bee.
+const FACE = new Image();
+FACE.src = "assets/face.png";
+
+function star(g, x, y, r) {
+  g.beginPath();
+  for (let i = 0; i < 10; i++) {
+    const a = (Math.PI / 5) * i - Math.PI / 2;
+    const rr = i % 2 ? r * 0.45 : r;
+    g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr);
+  }
+  g.closePath();
+  g.fill();
+  g.stroke();
+}
+
 class Bee {
   constructor() {
     this.reset();
@@ -20,7 +36,7 @@ class Bee {
     this.x = 220;
     this.y = H / 2 - 40;
     this.vy = 0;
-    this.r = 17; // collision radius
+    this.r = 24; // collision radius
     this.angle = 0;
     this.wingT = 0;
     this.bobT = 0;
@@ -49,6 +65,76 @@ class Bee {
   }
 
   draw(g) {
+    if (FACE.complete && FACE.naturalWidth) return this.drawFace(g);
+    this.drawBee(g);
+  }
+
+  // Jeme: the photo face with little flapping wings
+  drawFace(g) {
+    const R = 27;
+    const flap = Math.sin(this.wingT) * 0.7;
+    g.save();
+    g.translate(this.x, this.y);
+    g.rotate(this.angle * 0.7);
+
+    // wings (one on each side, behind the head)
+    const wing = (side) => {
+      g.save();
+      g.translate(side * (R - 4), -6);
+      g.rotate(side * (-0.5 + flap));
+      g.fillStyle = "rgba(255,255,255,0.95)";
+      g.strokeStyle = "#5b7a99";
+      g.lineWidth = 2;
+      g.beginPath();
+      g.ellipse(side * 16, -8, 18, 10, side * -0.4, 0, Math.PI * 2);
+      g.fill();
+      g.stroke();
+      g.strokeStyle = "rgba(91,122,153,0.6)";
+      g.beginPath();
+      g.moveTo(side * 4, -4);
+      g.lineTo(side * 26, -12);
+      g.stroke();
+      g.restore();
+    };
+    wing(-1);
+    wing(1);
+
+    // face
+    g.save();
+    g.beginPath();
+    g.arc(0, 0, R, 0, Math.PI * 2);
+    g.clip();
+    if (!this.alive) g.filter = "grayscale(0.7)";
+    g.drawImage(FACE, -R, -R, R * 2, R * 2);
+    g.filter = "none";
+    g.restore();
+
+    g.strokeStyle = "#ffcc33";
+    g.lineWidth = 4;
+    g.beginPath();
+    g.arc(0, 0, R, 0, Math.PI * 2);
+    g.stroke();
+    g.strokeStyle = "#3a2a10";
+    g.lineWidth = 1.5;
+    g.beginPath();
+    g.arc(0, 0, R + 2, 0, Math.PI * 2);
+    g.stroke();
+
+    // dizzy stars when crashed
+    if (!this.alive) {
+      const t = performance.now() / 300;
+      g.fillStyle = "#ffe066";
+      g.strokeStyle = "#8a5520";
+      g.lineWidth = 1.5;
+      for (let i = 0; i < 3; i++) {
+        const a = t + (i * Math.PI * 2) / 3;
+        star(g, Math.cos(a) * 26, -R - 6 + Math.sin(a) * 6, 6);
+      }
+    }
+    g.restore();
+  }
+
+  drawBee(g) {
     g.save();
     g.translate(this.x, this.y);
     g.rotate(this.angle);

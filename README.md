@@ -1,10 +1,16 @@
-# 🐝 Bumble Dash
+# Jeme-Jeme
 
-A tiny tap-to-flap browser game about a very clumsy bee. Inspired by
+A tiny tap-to-flap browser game starring Jeme, a very clumsy flyer.
+
+**Play live:** https://imraymarttroy.github.io/bumble-dash/
+
+Inspired by
 [Clumsy Bird](https://github.com/ellisonleao/clumsy-bird), but written from
-scratch in plain JavaScript with no engine, no build step and no image or
-sound files: every sprite is drawn on a `<canvas>` and every sound is
-synthesized with the Web Audio API.
+scratch in plain JavaScript with no engine and no build step. The only image
+is the player's face (`assets/face.png`); everything else is drawn on a
+`<canvas>` and every sound is synthesized with the Web Audio API.
+
+To change the hero, replace `assets/face.png` with any square image.
 
 ## Play
 
@@ -42,7 +48,8 @@ To publish it for free, enable **GitHub Pages** for this repo
 index.html        page shell
 css/style.css     layout and scaling
 js/audio.js       synthesized sound effects
-js/entities.js    Bee, Stalk, Scenery and Particles classes
+assets/face.png   the player's face
+js/entities.js    Player (Bee), Stalk, Scenery and Particles classes
 js/game.js        state machine, input, game loop, HUD
 ```
 

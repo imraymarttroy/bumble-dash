@@ -1,5 +1,5 @@
 /*
- * Bumble Dash - main game loop and state machine.
+ * Jeme-Jeme - main game loop and state machine.
  * States: title -> ready -> play -> dying -> over -> ready ...
  */
 (() => {
@@ -26,7 +26,7 @@
     maxSpeed: 330,
     speedPerPoint: 3,
     startGap: 190,
-    minGap: 140,
+    minGap: 150,
     gapPerPoint: 1.5,
     spacing: 300, // horizontal distance between stalks
   };
@@ -55,7 +55,7 @@
   let shake = 0;
   let scorePop = 0;
 
-  try { best = parseInt(localStorage.getItem("bumble-best") || "0", 10) || 0; } catch (e) {}
+  try { best = parseInt(localStorage.getItem("jeme-best") || "0", 10) || 0; } catch (e) {}
 
   function setState(s) {
     state = s;
@@ -190,7 +190,7 @@
     if (state === "dying") {
       bee.update(dt, CFG.gravity);
       if (bee.y + bee.r >= FLOOR_Y) {
-        bee.y = FLOOR_Y - 24;
+        bee.y = FLOOR_Y - 29;
         bee.vy = 0;
         bee.angle = Math.PI / 2;
         finishRun();
@@ -206,7 +206,7 @@
     particles.burst(bee.x, bee.y, "#ffcc33", 14, 220);
     particles.burst(bee.x, bee.y, "#2b2b2b", 6, 160);
     if (onGround) {
-      bee.y = FLOOR_Y - 24;
+      bee.y = FLOOR_Y - 29;
       bee.angle = Math.PI / 2;
       finishRun();
     } else {
@@ -220,7 +220,7 @@
     if (score > best) {
       best = score;
       newBest = true;
-      try { localStorage.setItem("bumble-best", String(best)); } catch (e) {}
+      try { localStorage.setItem("jeme-best", String(best)); } catch (e) {}
       setTimeout(() => Sfx.best(), 350);
     }
     setState("over");
@@ -327,8 +327,8 @@
     // HUD / overlays
     if (state === "title") {
       const bob = Math.sin(time * 2.5) * 6;
-      text("BUMBLE DASH", W / 2, 140 + bob, 78, { color: "#ffcc33", lw: 12 });
-      text("a very clumsy bee", W / 2, 205, 26, { color: "#fff", lw: 6 });
+      text("JEME-JEME", W / 2, 140 + bob, 84, { color: "#ffcc33", lw: 12 });
+      text("a very clumsy flyer", W / 2, 205, 26, { color: "#fff", lw: 6 });
       if (Math.floor(time * 2) % 2 === 0) text("Tap or press Space to start", W / 2, 420, 30, { lw: 7 });
       if (best > 0) text(`Best: ${best}`, W / 2, 470, 24, { lw: 6 });
     }
@@ -415,5 +415,5 @@
   requestAnimationFrame(frame);
 
   // expose a tiny hook for debugging / automated tests
-  window.BumbleDash = { get state() { return state; }, get score() { return score; }, press };
+  window.JemeJeme = { get state() { return state; }, get score() { return score; }, press };
 })();
