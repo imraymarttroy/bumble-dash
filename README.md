@@ -32,6 +32,21 @@ To publish it for free, enable **GitHub Pages** for this repo
 | Pause      | P or Esc                               |
 | Mute       | M, or the speaker icon (top right)     |
 
+## Multiplayer (up to 4 players)
+
+1. One player taps **Create Room** and gets a 5-letter code (or taps
+   **Copy invite link** to share `.../bumble-dash/?room=CODE`).
+2. Friends type the code and tap **Join** (or just open the link).
+3. The host taps **Start game** once 2–4 players are in.
+
+Everyone flies the exact same course at the same time; crashed players
+keep watching until the last one falls. Highest score wins, and the host
+can start a rematch from the results screen.
+
+It works with no server of our own: [PeerJS](https://peerjs.com/) (WebRTC)
+connects the browsers directly, and its free cloud broker is only used to
+find a room by its code. If the host leaves, the room closes.
+
 ## Features
 
 - Flower-stalk obstacles with randomized, always-reachable gaps
@@ -50,7 +65,8 @@ css/style.css     layout and scaling
 js/audio.js       synthesized sound effects
 assets/face.png   the player's face
 js/entities.js    Player (Bee), Stalk, Scenery and Particles classes
-js/game.js        state machine, input, game loop, HUD
+js/net.js         multiplayer rooms (PeerJS): create / join / relay
+js/game.js        state machine, input, game loop, HUD, menu & lobby
 ```
 
 ## Tweaking
