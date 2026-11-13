@@ -13,7 +13,7 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 /* --------------------------------------------------------------- Player */
 // The player's face. If it fails to load, the game falls back to the bee.
 const FACE = new Image();
-FACE.src = "assets/face.png";
+FACE.src = "assets/face.png?v=2";
 
 function star(g, x, y, r) {
   g.beginPath();
