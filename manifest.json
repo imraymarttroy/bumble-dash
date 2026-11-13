@@ -1,0 +1,13 @@
+{
+  "name": "Jeme-Jeme",
+  "short_name": "Jeme-Jeme",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#1d2b3a",
+  "theme_color": "#7ec8e3",
+  "icons": [
+    { "src": "assets/face.png", "sizes": "256x256", "type": "image/png" }
+  ]
+}

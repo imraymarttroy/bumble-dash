@@ -4,13 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#7ec8e3" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="Jeme-Jeme" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="assets/face.png" />
   <meta name="description" content="Jeme-Jeme - a tiny tap-to-flap browser game. Play solo or with up to 4 friends." />
   <title>Jeme-Jeme</title>
-  <link rel="stylesheet" href="css/style.css?v=4" />
+  <link rel="stylesheet" href="css/style.css?v=6" />
 </head>
 <body>
   <main id="wrap">
-    <canvas id="game" width="900" height="600" aria-label="Jeme-Jeme game"></canvas>
+    <canvas id="game" width="540" height="920" aria-label="Jeme-Jeme game"></canvas>
 
     <div id="menu" class="overlay">
       <div class="card">
@@ -47,9 +53,9 @@
   <p class="hint">Space / Click / Tap to flap &middot; P to pause &middot; M to mute</p>
 
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
-  <script src="js/audio.js?v=4"></script>
-  <script src="js/entities.js?v=4"></script>
-  <script src="js/net.js?v=4"></script>
-  <script src="js/game.js?v=4"></script>
+  <script src="js/audio.js?v=6"></script>
+  <script src="js/entities.js?v=6"></script>
+  <script src="js/net.js?v=6"></script>
+  <script src="js/game.js?v=6"></script>
 </body>
 </html>
